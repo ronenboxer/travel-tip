@@ -23,9 +23,10 @@ function onInit() {
                 gCurrPos = e.latLng
             })
             gMap.addListener('center_changed', () => {
-                const {lat,lng} = mapService.getCoords()
-                gCurrPos = {lat:lat(),lng:lng()}
-                _saveQueryStringParam(gCurrPos)})
+                const { lat, lng } = mapService.getCoords()
+                gCurrPos = { lat: lat(), lng: lng() }
+                _saveQueryStringParam(gCurrPos)
+            })
         })
         .then(locs => {
             _onRenderMarks()
@@ -70,16 +71,13 @@ function onGetUserPos() {
             console.log('err!!!', err)
         })
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> a3f26a5319b1bc0f896b2254ae2a6788b3cb5132
+
 function onPanTo({ lat, lng, ev }) {
     if (ev) {
         ev.preventDefault()
         var str = ev.target.querySelector('input').value
         mapService.getGeoLoc(str)
-<<<<<<< HEAD
             .then(pos => gCurrPos = pos)
             .then(({ lat, lng }) => mapService.panTo(lat, lng))
             .then(() => _saveQueryStringParam(gCurrPos))
@@ -90,11 +88,6 @@ function onPanTo({ lat, lng, ev }) {
         _saveQueryStringParam(gCurrPos)
         mapService.panTo(lat, lng)
     }
-=======
-            .then(({ lat, lng }) => mapService.panTo(lat, lng))
-            .catch('adress not found')
-    } else mapService.panTo(lat, lng)
->>>>>>> a3f26a5319b1bc0f896b2254ae2a6788b3cb5132
     console.log('Panning the Map')
 }
 
@@ -104,13 +97,8 @@ function getUserInput(isAdding) {
     const icon = document.querySelector('.pan-icons').value
     const name = document.querySelector('.loc-name').value
     document.querySelector('.loc-name').value = ''
-<<<<<<< HEAD
-    onAddMarker(gCurrPos.lat(), gCurrPos.lng())
+    onAddMarker(gCurrPos.lat(), gCurrPos.lng(), name, icon)
     locService.add({ name, lat: gCurrPos.lat(), lng: gCurrPos.lng() })
-=======
-    onAddMarker(latLng.lat(), latLng.lng(), name, icon)
-    locService.add({ name, lat: latLng.lat(), lng: latLng.lng() })
->>>>>>> a3f26a5319b1bc0f896b2254ae2a6788b3cb5132
     onRenderLocs()
 }
 
