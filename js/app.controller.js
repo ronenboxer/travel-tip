@@ -25,6 +25,10 @@ function onInit() {
                 latLng = e.latLng
             })
         })
+        .then(locs => {
+            _onRenderMarks()
+            return locs
+        })
         .then(() => onRenderLocs())
         .catch(() => console.log('Error: cannot init map'))
     const prm = locService.get().then(console.log)
@@ -64,8 +68,11 @@ function onGetUserPos() {
             console.log('err!!!', err)
         })
 }
-function onPanTo() {
-    
+function onPanTo({lat, lng, ev}) {
+    if (ev) {
+        ev.preventDefault()
+        var str = ev.target.querySelector('input').value
+    }
     console.log('Panning the Map')
     mapService.panTo(lat, lng)
 }
@@ -74,22 +81,33 @@ function getUserInput(isAdding) {
     document.querySelector('.pick-location-modal').classList.add('hide')
     if (!isAdding) return
     const name = document.querySelector('.loc-name').value
+    document.querySelector('.loc-name').value = ''
     onAddMarker(latLng.lat(), latLng.lng())
     locService.add({ name, lat: latLng.lat(), lng: latLng.lng() })
+    onRenderLocs()
 }
 
 function onRenderLocs() {
     const elLoclIST = document.querySelector('.saved-locs-container .loc-list')
-    locService.get().then(locs => {
-        elLoclIST.innerHTML = locs.map(loc => `<li>
+    locService.get()
+        .then(locs => {
+            elLoclIST.innerHTML = locs.map(loc => `<li>
         <button onclick="onDeleteLoc('${loc.locId}')">Delete</button>
         ${loc.name}
-        <button onclick="onPanTo({${loc}})">Go</button>
+        <button onclick="onPanTo({lat:${loc.lat},lng:${loc.lng}})">Go</button>
         </li>`).join('')
-    })
+            return locs
+        })
 }
 
 function onDeleteLoc(locId) {
     locService.delete(locId)
+    mapService.initMap()
     onRenderLocs()
+    _onRenderMarks()
+}
+
+function _onRenderMarks() {
+    locService.get()
+        .then(locs => locs.forEach(loc => onAddMarker(loc.lat, loc.lng)))
 }

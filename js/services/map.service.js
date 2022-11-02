@@ -11,6 +11,7 @@ export const mapService = {
 // Var that is used throughout this Module (not global)
 var gMap
 
+
 function initMap(lat = 32.0749831, lng = 34.9120554) {
     console.log('InitMap')
     return _connectGoogleApi()
@@ -24,8 +25,7 @@ function initMap(lat = 32.0749831, lng = 34.9120554) {
             console.log('Map!', gMap)
             return gMap
         })
-
-        
+    
 }
 
 function addMarker(loc, placeName) {
