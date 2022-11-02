@@ -41,6 +41,8 @@ function addMarker(loc, placeName) {
 function panTo(lat, lng) {
     var laLatLng = new google.maps.LatLng(lat, lng)
     gMap.panTo(laLatLng)
+    gMap.setZoom(17)
+    // gMap.setCenter(laLatLng)
 }
 
 
