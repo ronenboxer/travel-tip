@@ -14,8 +14,9 @@
         <nav class="main-nav">
             <div class="main-input">
                 <form onsubmit="onPanTo({ev: event})" class="search-loc">
-                <input class="input-loc" type="text" placeholder="Enter coordinations">
-                <button class="btn-enter-loc">Search</button></form>
+                    <input class="input-loc" type="text" placeholder="Enter coordinations">
+                    <button class="btn-enter-loc">Search</button>
+                </form>
                 <button onclick="onGetUserPos()" class="btn-user-pos">Get User Position</button>
             </div>
             <div class="curr-input">
@@ -36,6 +37,14 @@
             <div class="pick-location-modal flex col align-center hide">
                 <h2>Location name?</h2>
                 <input type="text" class="loc-name" placeholder="Home..">
+                <select name="pan-icons" title="select font" id="icon" class="pan-icons">
+                    <option value="">Regular</option>
+                    <option value="home">Home</option>
+                    <option value="police">Police</option>
+                    <option value="car">Car</option>
+                    <option value="plane">Plane</option>
+                    <option value="toilets">Toilet</option>
+                </select>
                 <div class="btns-container">
                     <button class="add" onclick="onGetUserInput(true)">Add</button>
                     <button class="cancel" onclick="onGetUserInput(false)">Cancel</button>
