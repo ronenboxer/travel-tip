@@ -16,9 +16,6 @@ let gCurrPos
 
 function onInit() {
     mapService.initMap()
-        // .then(() => {
-        //     console.log('Map is ready')
-        // })
         .then((gMap) => {
             console.log(`gMap:`, gMap)
             gMap.addListener("click", (e) => {
@@ -48,16 +45,15 @@ function getPosition() {
     })
 }
 
-function onAddMarker(lat, lng) {
+function onAddMarker(lat, lng, placeName, icon = '') {
 
     console.log('Adding a marker')
-    mapService.addMarker({ lat, lng })
+    mapService.addMarker({ lat, lng }, placeName, icon)
 }
 
 function onGetLocs() {
     locService.getLocs()
         .then(locs => {
-            console.log('Locations:', locs)
             document.querySelector('.locs').innerText = JSON.stringify(locs, null, 2)
         })
 }
@@ -74,12 +70,16 @@ function onGetUserPos() {
             console.log('err!!!', err)
         })
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> a3f26a5319b1bc0f896b2254ae2a6788b3cb5132
 function onPanTo({ lat, lng, ev }) {
     if (ev) {
         ev.preventDefault()
         var str = ev.target.querySelector('input').value
         mapService.getGeoLoc(str)
+<<<<<<< HEAD
             .then(pos => gCurrPos = pos)
             .then(({ lat, lng }) => mapService.panTo(lat, lng))
             .then(() => _saveQueryStringParam(gCurrPos))
@@ -90,16 +90,27 @@ function onPanTo({ lat, lng, ev }) {
         _saveQueryStringParam(gCurrPos)
         mapService.panTo(lat, lng)
     }
+=======
+            .then(({ lat, lng }) => mapService.panTo(lat, lng))
+            .catch('adress not found')
+    } else mapService.panTo(lat, lng)
+>>>>>>> a3f26a5319b1bc0f896b2254ae2a6788b3cb5132
     console.log('Panning the Map')
 }
 
 function getUserInput(isAdding) {
     document.querySelector('.pick-location-modal').classList.add('hide')
     if (!isAdding) return
+    const icon = document.querySelector('.pan-icons').value
     const name = document.querySelector('.loc-name').value
     document.querySelector('.loc-name').value = ''
+<<<<<<< HEAD
     onAddMarker(gCurrPos.lat(), gCurrPos.lng())
     locService.add({ name, lat: gCurrPos.lat(), lng: gCurrPos.lng() })
+=======
+    onAddMarker(latLng.lat(), latLng.lng(), name, icon)
+    locService.add({ name, lat: latLng.lat(), lng: latLng.lng() })
+>>>>>>> a3f26a5319b1bc0f896b2254ae2a6788b3cb5132
     onRenderLocs()
 }
 
