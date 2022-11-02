@@ -8,8 +8,9 @@ window.onGetLocs = onGetLocs
 window.onGetUserPos = onGetUserPos
 window.onGetUserInput = getUserInput
 window.onDeleteLoc = onDeleteLoc
+window.onCopyLink = onCopyLink
 
-let latLng
+let gCurrPos
 
 
 
@@ -22,14 +23,19 @@ function onInit() {
             console.log(`gMap:`, gMap)
             gMap.addListener("click", (e) => {
                 document.querySelector('.pick-location-modal').classList.remove('hide')
-                latLng = e.latLng
+                gCurrPos = e.latLng
             })
+            gMap.addListener('center_changed', () => {
+                const {lat,lng} = mapService.getCoords()
+                gCurrPos = {lat:lat(),lng:lng()}
+                _saveQueryStringParam(gCurrPos)})
         })
         .then(locs => {
             _onRenderMarks()
             return locs
         })
         .then(() => onRenderLocs())
+        .then(_renderByQueryStrParam)
         .catch(() => console.log('Error: cannot init map'))
     const prm = locService.get().then(console.log)
 }
@@ -68,14 +74,22 @@ function onGetUserPos() {
             console.log('err!!!', err)
         })
 }
-function onPanTo({lat, lng, ev}) {
+
+function onPanTo({ lat, lng, ev }) {
     if (ev) {
         ev.preventDefault()
         var str = ev.target.querySelector('input').value
         mapService.getGeoLoc(str)
-        .then(({lat,lng}) => mapService.panTo(lat, lng))
-        .catch('adress not found')
-    } else mapService.panTo(lat, lng)
+            .then(pos => gCurrPos = pos)
+            .then(({ lat, lng }) => mapService.panTo(lat, lng))
+            .then(() => _saveQueryStringParam(gCurrPos))
+            // .then(console.log)
+            .catch('adress not found')
+    } else {
+        gCurrPos = { lat, lng }
+        _saveQueryStringParam(gCurrPos)
+        mapService.panTo(lat, lng)
+    }
     console.log('Panning the Map')
 }
 
@@ -84,8 +98,8 @@ function getUserInput(isAdding) {
     if (!isAdding) return
     const name = document.querySelector('.loc-name').value
     document.querySelector('.loc-name').value = ''
-    onAddMarker(latLng.lat(), latLng.lng())
-    locService.add({ name, lat: latLng.lat(), lng: latLng.lng() })
+    onAddMarker(gCurrPos.lat(), gCurrPos.lng())
+    locService.add({ name, lat: gCurrPos.lat(), lng: gCurrPos.lng() })
     onRenderLocs()
 }
 
@@ -109,7 +123,28 @@ function onDeleteLoc(locId) {
     _onRenderMarks()
 }
 
+function onCopyLink() {
+    const { lat, lng } = mapService.getCoords()
+    gCurrPos = { lat: lat(), lng: lng() }
+    navigator.clipboard.writeText(_saveQueryStringParam(gCurrPos))
+}
+
 function _onRenderMarks() {
     locService.get()
         .then(locs => locs.forEach(loc => onAddMarker(loc.lat, loc.lng)))
+}
+
+function _saveQueryStringParam({ lat, lng }) {
+    const queryStrParam = `?lat=${lat ? lat : ''}&lng=${lng ? lng : ''}`
+    const newUrl = window.location.protocol + '//' + window.location.host + window.location.pathname + queryStrParam
+    window.history.pushState({ path: newUrl }, '', newUrl)
+    return newUrl
+}
+
+function _renderByQueryStrParam() {
+    const queryStrParam = new URLSearchParams(window.location.search)
+    const lat = queryStrParam.get('lat')
+    const lng = queryStrParam.get('lng')
+    if (lat !== null && lat !== undefined &&
+        lng !== null && lng !== undefined) onPanTo({ lat, lng })
 }
