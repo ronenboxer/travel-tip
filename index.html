@@ -13,7 +13,7 @@
         <div class="logo">TravelTip Hiii</div>
         <nav class="main-nav">
             <div class="main-input">
-                <form onsubmit="onPanTo({str: this.querySelector('input').value, ev: event})" class="search-loc">
+                <form onsubmit="onPanTo({ev: event})" class="search-loc">
                 <input class="input-loc" type="text" placeholder="Enter coordinations">
                 <button class="btn-enter-loc">Search</button></form>
                 <button onclick="onGetUserPos()" class="btn-user-pos">Get User Position</button>
@@ -49,7 +49,7 @@
 
     <!-- <button onclick="onGetLocs()" class="btn-get-locs">Get Locations</button> -->
 
-
+    <script src="js/lib/axios.js"></script>
     <script type="module" src="js/app.controller.js"></script>
 </body>
 

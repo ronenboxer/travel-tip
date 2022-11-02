@@ -68,9 +68,11 @@ function onGetUserPos() {
             console.log('err!!!', err)
         })
 }
-function onPanTo({lat, lng, str, ev}) {
-    if (ev) ev.preventDefault()
-    if (str) return console.log(str)
+function onPanTo({lat, lng, ev}) {
+    if (ev) {
+        ev.preventDefault()
+        var str = ev.target.querySelector('input').value
+    }
     console.log('Panning the Map')
     mapService.panTo(lat, lng)
 }
