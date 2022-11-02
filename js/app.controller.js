@@ -7,8 +7,11 @@ window.onPanTo = onPanTo
 window.onGetLocs = onGetLocs
 window.onGetUserPos = onGetUserPos
 window.onGetUserInput = getUserInput
+window.onDeleteLoc = onDeleteLoc
 
 let latLng
+
+
 
 function onInit() {
     mapService.initMap()
@@ -22,7 +25,9 @@ function onInit() {
                 latLng = e.latLng
             })
         })
+        .then(() => onRenderLocs())
         .catch(() => console.log('Error: cannot init map'))
+    const prm = locService.get().then(console.log)
 }
 
 // This function provides a Promise API to the callback-based-api of getCurrentPosition
@@ -58,9 +63,9 @@ function onGetUserPos() {
             console.log('err!!!', err)
         })
 }
-function onPanTo() {
+function onPanTo({ lat, lng }) {
     console.log('Panning the Map')
-    mapService.panTo(35.6895, 139.6917)
+    mapService.panTo(lat, lng)
 }
 
 function getUserInput(isAdding) {
@@ -69,4 +74,20 @@ function getUserInput(isAdding) {
     const name = document.querySelector('.loc-name').value
     onAddMarker(latLng.lat(), latLng.lng())
     locService.add({ name, lat: latLng.lat(), lng: latLng.lng() })
+}
+
+function onRenderLocs() {
+    const elLoclIST = document.querySelector('.saved-locs-container .loc-list')
+    locService.get().then(locs => {
+        elLoclIST.innerHTML = locs.map(loc => `<li>
+        <button onclick="onDeleteLoc('${loc.locId}')">Delete</button>
+        ${loc.name}
+        <button onclick="onPanTo({${loc}})">Go</button>
+        </li>`).join('')
+    })
+}
+
+function onDeleteLoc(locId) {
+    locService.delete(locId)
+    onRenderLocs()
 }
