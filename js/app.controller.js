@@ -6,6 +6,9 @@ window.onAddMarker = onAddMarker
 window.onPanTo = onPanTo
 window.onGetLocs = onGetLocs
 window.onGetUserPos = onGetUserPos
+window.onGetUserInput = getUserInput
+
+let latLng
 
 function onInit() {
     mapService.initMap()
@@ -15,8 +18,8 @@ function onInit() {
         .then((gMap) => {
             console.log(`gMap:`, gMap)
             gMap.addListener("click", (e) => {
-                onAddMarker(e.latLng.lat(), e.latLng.lng())
-                locService.add({name:'place', lat:e.latLng.lat(), lng:e.latLng.lng()})
+                document.querySelector('.pick-location-modal').classList.remove('hide')
+                latLng = e.latLng
             })
         })
         .catch(() => console.log('Error: cannot init map'))
@@ -31,7 +34,7 @@ function getPosition() {
 }
 
 function onAddMarker(lat, lng) {
-    
+
     console.log('Adding a marker')
     mapService.addMarker({ lat, lng })
 }
@@ -58,4 +61,12 @@ function onGetUserPos() {
 function onPanTo() {
     console.log('Panning the Map')
     mapService.panTo(35.6895, 139.6917)
+}
+
+function getUserInput(isAdding) {
+    document.querySelector('.pick-location-modal').classList.add('hide')
+    if (!isAdding) return 
+    const name = document.querySelector('.loc-name').value
+    onAddMarker(latLng.lat(), latLng.lng())
+    locService.add({ name, lat: latLng.lat(), lng: latLng.lng() })
 }

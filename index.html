@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TravelTip</title>
+    <link rel="stylesheet" href="/travel-tip/styles/main.css">
 </head>
+
 <body>
     <header class="main-header">
         <div class="logo">TravelTip Hiii</div>
         <nav class="main-nav">
             <div class="main-input">
-                <input class="input-loc" type="text" placeholder="Enter coordinations"> 
+                <input class="input-loc" type="text" placeholder="Enter coordinations">
                 <button class="btn-enter-loc">enter</button>
-                <button onclick="onPanTo()"class="btn-pan">Pan Map to Tokyo</button>
+                <button onclick="onPanTo()" class="btn-pan">Pan Map to Tokyo</button>
                 <button onclick="onGetUserPos()" class="btn-user-pos">Get User Position</button>
             </div>
             <div class="curr-input">
@@ -29,16 +32,25 @@
                 <ul class="loc-list"></ul>
             </div>
         </aside>
-        <section class="map">
+        <section class="map-container">
+            <div class="pick-location-modal flex col align-center hide">
+                <h2>Location name?</h2>
+                <input type="text" class="loc-name" placeholder="Home..">
+                <div class="btns-container">
+                    <button class="add" onclick="onGetUserInput(true)">Add</button>
+                    <button class="cancel" onclick="onGetUserInput(false)">Cancel</button>
+                </div>
+            </div>
             <div id="map" style="width: 100%; height: 400px;"></div>
             <button onclick="onAddMarker()" class="btn-add-marker">Add Marker Speific Location</button>
 
         </section>
     </main>
-    
+
     <!-- <button onclick="onGetLocs()" class="btn-get-locs">Get Locations</button> -->
-    
+
 
     <script type="module" src="js/app.controller.js"></script>
 </body>
+
 </html>
