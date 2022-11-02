@@ -1,3 +1,6 @@
+import { storageService } from './services/storgae.service.js'
+import { utilsService } from './services/utils.service.js'
+
 export const locService = {
     getLocs
 }
