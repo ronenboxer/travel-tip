@@ -2,22 +2,43 @@ import { storageService } from './storage.service.js'
 import { utilsService } from './utils.service.js'
 
 export const locService = {
-    getLocs
+    getLocs,
+    add: addloc,
+    update: updateLoc,
+    delete: deleteLoc
 }
 
 const LOCS_STORAGE_KEY = 'locsDB'
 
 let gLocs
 
-function createLoc({name, lat, lng, weather}){
-    return {
-        id: utilsService.makeId(),
+function addloc({name, lat, lng, weather, id}){
+    const locId = id? id : utilsService.makeId()
+    gLocs[locId]={
         name,
         lat,
         lng,
         weather,
         createdAt: Date.now()
     }
+    _saveLocs()
+}
+
+function updateLoc({locId, name, lat, lng, weather}){
+    if (!gLocs[locId]) return addloc({locId, name, lat, lng, weather})
+    if (name) gLocs[locId] = {name}
+    if (lat && lng) gLocs[locId] = {lat, lng}
+    if (weather) gLocs[locId] = {weather}
+    gLocs[locId].updatedAt = Date.now()
+    _saveLocs()
+    return gLocs[locId]
+}
+
+function deleteLoc(locId){
+    if (!locId) return null
+    const loc = gLocs[locId]
+    delete gLocs[locId]
+    return loc
 }
 
 const locs = [
