@@ -42,7 +42,10 @@ function updateLoc({locId, name, lat, lng, weather}){
 function deleteLoc(locId){
     if (!locId) return null
     const idx = gLocs.findIndex(loc => loc.locId === locId)
-    if (idx !== 1) return gLocs.splice(idx,1)
+    if (idx === -1) return  null
+    const loc = gLocs.splice(idx,1)
+    _saveLocs()
+    return loc
 }
 
 // const locs = [
