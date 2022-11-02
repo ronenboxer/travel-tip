@@ -13,8 +13,9 @@
         <div class="logo">TravelTip Hiii</div>
         <nav class="main-nav">
             <div class="main-input">
+                <form onsubmit="onPanTo({str: this.querySelector('input').value, ev: event})" class="search-loc">
                 <input class="input-loc" type="text" placeholder="Enter coordinations">
-                <button class="btn-enter-loc" onclick="onPanTo()">Search</button>
+                <button class="btn-enter-loc">Search</button></form>
                 <button onclick="onGetUserPos()" class="btn-user-pos">Get User Position</button>
             </div>
             <div class="curr-input">
