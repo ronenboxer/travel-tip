@@ -72,9 +72,13 @@ function onPanTo({lat, lng, ev}) {
     if (ev) {
         ev.preventDefault()
         var str = ev.target.querySelector('input').value
+        mapService.getGeoLoc(str)
+        .then(({lat,lng}) => mapService.panTo(lat, lng))
+        .catch('adress not found')
     }
+
     console.log('Panning the Map')
-    mapService.panTo(lat, lng)
+    // mapService.panTo(lat, lng)
 }
 
 function getUserInput(isAdding) {

@@ -4,7 +4,8 @@ import { utilsService } from './utils.service.js'
 export const mapService = {
     initMap,
     addMarker,
-    panTo
+    panTo,
+    getGeoLoc
 }
 
 
@@ -25,7 +26,7 @@ function initMap(lat = 32.0749831, lng = 34.9120554) {
             console.log('Map!', gMap)
             return gMap
         })
-    
+
 }
 
 function addMarker(loc, placeName) {
@@ -55,4 +56,29 @@ function _connectGoogleApi() {
         elGoogleApi.onload = resolve
         elGoogleApi.onerror = () => reject('Google script failed to load')
     })
+}
+
+const ADDRESS_KEY = 'addressCache'
+
+const addressCache = storageService.load(ADDRESS_KEY) || {}
+
+const GEOLOC_API_KEY = `AIzaSyAiwFTX9E6QK4v027yLl0zzwxKo78enu9k`
+
+// Get address data from network or cache - return a promise
+function getGeoLoc(address) {
+    if (addressCache[address]) {
+        console.log('No need to axios.get, retrieving from Cache')
+        // return userCache[username]
+        return Promise.resolve(addressCache[address])
+    }
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${GEOLOC_API_KEY}`
+    return axios.get(url)
+        .then(res => res.data)
+        .then((geoLoc) => {
+            return geoLoc.results[0].geometry.location
+        })
+        .catch(() => {
+            throw new Error(`Could not find address: ${address}`)
+        })
+
 }
