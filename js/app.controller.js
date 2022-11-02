@@ -58,19 +58,21 @@ function onGetUserPos() {
             console.log('User position is:', pos.coords)
             document.querySelector('.user-pos').innerText =
                 `Latitude: ${pos.coords.latitude} - Longitude: ${pos.coords.longitude}`
+            mapService.panTo(pos.coords.latitude, pos.coords.longitude)
         })
         .catch(err => {
             console.log('err!!!', err)
         })
 }
-function onPanTo({ lat, lng }) {
+function onPanTo() {
+    
     console.log('Panning the Map')
     mapService.panTo(lat, lng)
 }
 
 function getUserInput(isAdding) {
     document.querySelector('.pick-location-modal').classList.add('hide')
-    if (!isAdding) return 
+    if (!isAdding) return
     const name = document.querySelector('.loc-name').value
     onAddMarker(latLng.lat(), latLng.lng())
     locService.add({ name, lat: latLng.lat(), lng: latLng.lng() })
