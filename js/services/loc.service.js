@@ -5,52 +5,55 @@ export const locService = {
     getLocs,
     add: addloc,
     update: updateLoc,
-    delete: deleteLoc
+    delete: deleteLoc,
+    get: getLocs
 }
 
 const LOCS_STORAGE_KEY = 'locsDB'
 
-let gLocs
+let gLocs = _loadLocs(LOCS_STORAGE_KEY) || []
 
-function addloc({name, lat, lng, weather, id}){
-    const locId = id? id : utilsService.makeId()
-    gLocs[locId]={
+function addloc({name, lat, lng, weather}){
+    const newloc = {
+        locId: utilsService.makeId(),
         name,
         lat,
         lng,
         weather,
         createdAt: Date.now()
     }
+    gLocs.unshift(newloc)
     _saveLocs()
+    return newloc
 }
 
 function updateLoc({locId, name, lat, lng, weather}){
-    if (!gLocs[locId]) return addloc({locId, name, lat, lng, weather})
-    if (name) gLocs[locId] = {name}
-    if (lat && lng) gLocs[locId] = {lat, lng}
-    if (weather) gLocs[locId] = {weather}
-    gLocs[locId].updatedAt = Date.now()
+    const idx = gLocs.findIndex(loc => loc.locId = locId)
+    if (idx === -1) return addloc({locId, name, lat, lng, weather})
+
+    if (name) gLocs[idx] = {name}
+    if (lat && lng) gLocs[idx] = {lat, lng}
+    if (weather) gLocs[idx] = {weather}
+    gLocs[idx].updatedAt = Date.now()
     _saveLocs()
-    return gLocs[locId]
+    return gLocs[idx]
 }
 
 function deleteLoc(locId){
     if (!locId) return null
-    const loc = gLocs[locId]
-    delete gLocs[locId]
-    return loc
+    const idx = gLocs.findIndex(loc => loc.locId === locId)
+    if (idx !== 1) return gLocs.splice(idx,1)
 }
 
-const locs = [
-    { name: 'Greatplace', lat: 32.047104, lng: 34.832384 }, 
-    { name: 'Neveragain', lat: 32.047201, lng: 34.832581 }
-]
+// const locs = [
+//     { name: 'Greatplace', lat: 32.047104, lng: 34.832384 }, 
+//     { name: 'Neveragain', lat: 32.047201, lng: 34.832581 }
+// ]
 
 function getLocs() {
     return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve(locs)
-        }, 2000)
+        if (gLocs) resolve(gLocs)
+        else reject(gLocs)
     })
 }
 
