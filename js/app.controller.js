@@ -66,6 +66,7 @@ function onGetUserPos() {
             document.querySelector('.user-pos').innerText =
                 `Latitude: ${pos.coords.latitude} - Longitude: ${pos.coords.longitude}`
             mapService.panTo(pos.coords.latitude, pos.coords.longitude)
+            onPanTo({ lat: pos.coords.latitude, lng: pos.coords.longitude })
         })
         .catch(err => {
             console.log('err!!!', err)
@@ -103,14 +104,14 @@ function getUserInput(isAdding) {
 }
 
 function onRenderLocs() {
-    const elLoclIST = document.querySelector('.saved-locs-container .loc-list')
+    const elLoclIST = document.querySelector('.saved-locs-container tbody')
     locService.get()
         .then(locs => {
-            elLoclIST.innerHTML = locs.map(loc => `<li>
-        <button onclick="onDeleteLoc('${loc.locId}')">Delete</button>
-        ${loc.name}
-        <button onclick="onPanTo({lat:${loc.lat},lng:${loc.lng}})">Go</button>
-        </li>`).join('')
+            elLoclIST.innerHTML = locs.map(loc => `<tr>
+        <td><button onclick="onDeleteLoc('${loc.locId}')">Delete</button></td>
+        <td>${loc.name}</td>
+       <td> <button onclick="onPanTo({lat:${loc.lat},lng:${loc.lng}})">Go</button></td>
+        </tr>`).join('')
             return locs
         })
 }

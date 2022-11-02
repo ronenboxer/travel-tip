@@ -20,6 +20,9 @@ h6 {
 }
 
 /* Helpers */
+.grid{
+    display: grid;
+}
 .flex {
     display: flex;
 }
@@ -42,6 +45,23 @@ h6 {
 
 .flex.align-center {
     align-items: center;
+}
+
+.main-content{
+    grid-template-columns: 1fr 1fr;
+}
+
+.locs-info{
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 2fr;
+}
+
+/* table,th,td{
+    border-collapse: collapse;
+} */
+th,td{
+    border-radius: 10px;
+    border: 1px solid gray;
 }
 
 .map-container {
