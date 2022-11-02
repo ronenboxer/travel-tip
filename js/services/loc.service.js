@@ -66,3 +66,32 @@ function _loadLocs(){
 function _saveLocs(){
     storageService.save(LOCS_STORAGE_KEY, gLocs)
 }
+
+const ADDRESS_KEY = 'addressCache'
+
+const addressCache = loadFromStorage(STORAGE_KEY) || {}
+
+// Get address data from network or cache - return a promise
+function getGeoLoc(address) {
+    if (userCache[username]) {
+        console.log('No need to fetch, retrieving from Cache')
+        // return userCache[username]
+        return Promise.resolve(userCache[username])
+    }
+    const url = 'https://api.github.com/users/'
+    return fetch(url).then(res => res.json())
+        .then((user) => {
+            userCache[username] = user
+            saveToStorage(STORAGE_KEY, userCache)
+
+            // Cache Invalidation after 5 Seconds
+            // setTimeout(()=>{
+            //     delete userCache[username]
+            // }, 5000)
+
+            return user
+        })
+        .catch(() => {
+            throw new Error('Could not find user: ' + username)
+        })
+}
