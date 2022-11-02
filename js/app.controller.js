@@ -10,6 +10,20 @@ window.onGetUserInput = getUserInput
 window.onDeleteLoc = onDeleteLoc
 window.onCopyLink = onCopyLink
 
+const WEATHER_API_KEY = '4cd3d8d4e0c7a01ea8f97dede9adbaed'
+const WEATHER_IMGS = {
+    url: 'https://openweathermap.org/img/wn/',
+    weatherState: id => {
+        if (id > 800) return `0${id % 100 + 1}d.png`
+        if (id === 800) return '01d.png'
+        if (id >= 700) return '50d.png'
+        if (id >= 600 || id === 511) return '13d.png'
+        if (id >= 520 || (id >= 300 && id < 400)) return '09d.png'
+        if (id >= 500) return '10d.png'
+        if (id >= 200) '11d.png'
+        return id + 'd.png'
+    }
+}
 let gCurrPos
 
 
@@ -82,12 +96,14 @@ function onPanTo({ lat, lng, ev }) {
             .then(pos => gCurrPos = pos)
             .then(({ lat, lng }) => mapService.panTo(lat, lng))
             .then(() => _saveQueryStringParam(gCurrPos))
+            .then(_renderLocWeather)
             // .then(console.log)
             .catch('adress not found')
     } else {
         gCurrPos = { lat, lng }
         _saveQueryStringParam(gCurrPos)
         mapService.panTo(lat, lng)
+        _renderLocWeather({ lat, lng })
     }
     console.log('Panning the Map')
 }
@@ -147,4 +163,19 @@ function _renderByQueryStrParam() {
     const lng = queryStrParam.get('lng')
     if (lat !== null && lat !== undefined &&
         lng !== null && lng !== undefined) onPanTo({ lat, lng })
+}
+
+function _renderLocWeather({ lat, lng }) {
+    const url = _getWeatherUrlByCoords({ lat, lng })
+    axios.get(url)
+        .then(res => res.data)
+        .then(weather => document.querySelector('.weather').innerHTML = `
+    <h2 class="loc-name">${weather.name}</h2>
+    <img class="weather-img" src="${WEATHER_IMGS.url + WEATHER_IMGS.weatherState(weather.weather[0].id)}">
+    <h3 class="loc-temp">${weather.main.temp} &#8451;</h3>
+    <h4 class="weather-description">${weather.weather[0].description}</h4>`)
+}
+
+function _getWeatherUrlByCoords({ lat, lng }) {
+    return `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${WEATHER_API_KEY}&units=metric`
 }
