@@ -32,6 +32,10 @@ function onInit() {
     mapService.initMap()
         .then((gMap) => {
             console.log(`gMap:`, gMap)
+            const { lat, lng } = mapService.getCoords()
+            gCurrPos = { lat: lat(), lng: lng() }
+            _renderLocWeather(gCurrPos)
+            _saveQueryStringParam(gCurrPos)
             gMap.addListener("click", (e) => {
                 document.querySelector('.pick-location-modal').classList.remove('hide')
                 gCurrPos = e.latLng
@@ -39,6 +43,7 @@ function onInit() {
             gMap.addListener('center_changed', () => {
                 const { lat, lng } = mapService.getCoords()
                 gCurrPos = { lat: lat(), lng: lng() }
+                _renderLocWeather(gCurrPos)
                 _saveQueryStringParam(gCurrPos)
             })
         })
@@ -95,14 +100,11 @@ function onPanTo({ lat, lng, ev }) {
             .then(pos => gCurrPos = pos)
             .then(({ lat, lng }) => mapService.panTo(lat, lng))
             .then(() => _saveQueryStringParam(gCurrPos))
-            .then(_renderLocWeather)
-            // .then(console.log)
             .catch('adress not found')
     } else {
         gCurrPos = { lat, lng }
         _saveQueryStringParam(gCurrPos)
         mapService.panTo(lat, lng)
-        _renderLocWeather({ lat, lng })
     }
     console.log('Panning the Map')
 }
@@ -111,10 +113,10 @@ function getUserInput(isAdding) {
     document.querySelector('.pick-location-modal').classList.add('hide')
     if (!isAdding) return
     const icon = document.querySelector('.pan-icons').value
-    const name = document.querySelector('.loc-name').value
+    const name = document.querySelector('input.loc-name').value
     document.querySelector('.loc-name').value = ''
     onAddMarker(gCurrPos.lat(), gCurrPos.lng(), name, icon)
-    locService.add({ name, lat: gCurrPos.lat(), lng: gCurrPos.lng() })
+    locService.add({ name, lat: gCurrPos.lat(), lng: gCurrPos.lng() , icon})
     onRenderLocs()
 }
 
@@ -170,7 +172,7 @@ function _renderLocWeather({ lat, lng }) {
         .then(res => res.data)
         .then(weather => document.querySelector('.weather').innerHTML = `
     <h2 class="loc-name">${weather.name}</h2>
-    <img class="weather-img" src="${WEATHER_IMGS.url + WEATHER_IMGS.weatherState(weather.weather[0].id)}">
+    <img class="weather-img" src="${WEATHER_IMGS.url + weather.weather[0].icon}.png">
     <h3 class="loc-temp">${weather.main.temp} &#8451;</h3>
     <h4 class="weather-description">${weather.weather[0].description}</h4>`)
 }

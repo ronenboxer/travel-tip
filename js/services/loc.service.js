@@ -13,13 +13,12 @@ const LOCS_STORAGE_KEY = 'locsDB'
 
 let gLocs = _loadLocs(LOCS_STORAGE_KEY) || []
 
-function addloc({name, lat, lng, weather}){
+function addloc({name, lat, lng }){
     const newloc = {
         locId: utilsService.makeId(),
         name,
         lat,
         lng,
-        weather,
         createdAt: Date.now()
     }
     gLocs.unshift(newloc)
@@ -27,13 +26,12 @@ function addloc({name, lat, lng, weather}){
     return newloc
 }
 
-function updateLoc({locId, name, lat, lng, weather}){
+function updateLoc({locId, name, lat, lng, icon}){
     const idx = gLocs.findIndex(loc => loc.locId = locId)
-    if (idx === -1) return addloc({locId, name, lat, lng, weather})
-
+    if (idx === -1) return addloc({locId, name, lat, lng, })
+    if (icon !== undefined && icon !== null) gLocs[idx] = {icon}
     if (name) gLocs[idx] = {name}
     if (lat && lng) gLocs[idx] = {lat, lng}
-    if (weather) gLocs[idx] = {weather}
     gLocs[idx].updatedAt = Date.now()
     _saveLocs()
     return gLocs[idx]
@@ -54,7 +52,6 @@ function getLocs() {
         else reject(gLocs)
     })
 }
-
 
 function _loadLocs(){
     return storageService.load(LOCS_STORAGE_KEY)

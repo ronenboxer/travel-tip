@@ -27,7 +27,7 @@
             </div>
             <div class="main-input">
                 <form onsubmit="onPanTo({ev: event})" class="search-loc flex">
-                    <input class="input-loc" type="text" placeholder="Enter coordinations">
+                    <input class="input-loc" type="text" placeholder="Where to?">
                     <button class="btn-enter-loc">Search</button>
                 </form>
 
@@ -36,15 +36,15 @@
     </header>
 
     <main class="main-content grid">
-        <aside class="locs-info grid">
+        <aside class="locs-info grid space-between">
             <div class="weather"></div>
             <div class="saved-locs-container">
                 <table class="loc-list">
                     <thead>
                         <tr>
-                            <th>delete</th>
-                            <th>place name</th>
-                            <th>go</th>
+                            <th>Delete</th>
+                            <th>Title</th>
+                            <th>Go</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -69,7 +69,7 @@
                     <button class="cancel" onclick="onGetUserInput(false)">Cancel</button>
                 </div>
             </div>
-            <div id="map" style="width: 100%; height: 400px;"></div>
+            <div id="map" ></div>
 
         </section>
     </main>
