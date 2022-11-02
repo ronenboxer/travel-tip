@@ -9,8 +9,15 @@ window.onGetUserPos = onGetUserPos
 
 function onInit() {
     mapService.initMap()
-        .then(() => {
-            console.log('Map is ready')
+        // .then(() => {
+        //     console.log('Map is ready')
+        // })
+        .then((gMap) => {
+            console.log(`gMap:`, gMap)
+            gMap.addListener("click", (e) => {
+                onAddMarker(e.latLng.lat(), e.latLng.lng())
+                locService.add({name:'place', lat:e.latLng.lat(), lng:e.latLng.lng()})
+            })
         })
         .catch(() => console.log('Error: cannot init map'))
 }
@@ -23,9 +30,10 @@ function getPosition() {
     })
 }
 
-function onAddMarker() {
+function onAddMarker(lat, lng) {
+    
     console.log('Adding a marker')
-    mapService.addMarker({ lat: 32.0749831, lng: 34.9120554 })
+    mapService.addMarker({lat, lng})
 }
 
 function onGetLocs() {
