@@ -75,10 +75,8 @@ function onPanTo({lat, lng, ev}) {
         mapService.getGeoLoc(str)
         .then(({lat,lng}) => mapService.panTo(lat, lng))
         .catch('adress not found')
-    }
-
+    } else mapService.panTo(lat, lng)
     console.log('Panning the Map')
-    // mapService.panTo(lat, lng)
 }
 
 function getUserInput(isAdding) {
