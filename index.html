@@ -17,8 +17,8 @@
                 <div class="curr-location">
                     <p class="loc-info">You are at: <span class="user-pos"></span></p>
                     <div class="btns flex">
-                        <button onclick="onGetUserPos()" class="btn-user-pos">Get User Position</button>
-                        <button class="copy-loc" onclick="onCopyLink()">Copy location</button>
+                        <button onclick="onGetUserPos()" class="btn-user-pos"><iconify-icon inline icon="ep:position"></iconify-icon></button>
+                        <button class="copy-loc" onclick="onCopyLink()"><iconify-icon inline icon="carbon:copy-link"></iconify-icon></button>
                     </div>
 
                 </div>
@@ -26,9 +26,9 @@
 
             </div>
             <div class="main-input">
-                <form onsubmit="onPanTo({ev: event})" class="search-loc flex">
+                <form onsubmit="onSearchLoc(event)" class="search-loc flex">
                     <input class="input-loc" type="text" placeholder="Where to?">
-                    <button class="btn-enter-loc">Search</button>
+                    <button class="btn-enter-loc"><iconify-icon inline icon="bx:map-pin"></iconify-icon></button>
                 </form>
 
             </div>
@@ -55,7 +55,7 @@
         <section class="map-container">
             <div class="pick-location-modal flex col align-center hide">
                 <h2>Location name?</h2>
-                <input type="text" class="loc-name" placeholder="Home..">
+                <input type="text" class="loc-name">
                 <select name="pan-icons" title="select font" id="icon" class="pan-icons">
                     <option value="">Regular</option>
                     <option value="home">Home</option>
@@ -74,7 +74,7 @@
         </section>
     </main>
 
-
+    <script src="https://code.iconify.design/iconify-icon/1.0.1/iconify-icon.min.js"></script>
     <script src="js/lib/axios.js"></script>
     <script type="module" src="js/app.controller.js"></script>
 </body>

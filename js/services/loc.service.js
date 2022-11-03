@@ -13,12 +13,13 @@ const LOCS_STORAGE_KEY = 'locsDB'
 
 let gLocs = _loadLocs(LOCS_STORAGE_KEY) || []
 
-function addloc({name, lat, lng }){
+function addloc({name, lat, lng , icon}){
     const newloc = {
         locId: utilsService.makeId(),
         name,
         lat,
         lng,
+        icon,
         createdAt: Date.now()
     }
     gLocs.unshift(newloc)

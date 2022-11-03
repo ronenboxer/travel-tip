@@ -9,6 +9,7 @@ window.onGetUserPos = onGetUserPos
 window.onGetUserInput = getUserInput
 window.onDeleteLoc = onDeleteLoc
 window.onCopyLink = onCopyLink
+window.onSearchLoc = onSearchLoc
 
 const WEATHER_API_KEY = '4cd3d8d4e0c7a01ea8f97dede9adbaed'
 const WEATHER_IMGS = {
@@ -33,10 +34,13 @@ function onInit() {
         .then((gMap) => {
             console.log(`gMap:`, gMap)
             const { lat, lng } = mapService.getCoords()
-            gCurrPos = { lat: lat(), lng: lng() }
-            _renderLocWeather(gCurrPos)
-            _saveQueryStringParam(gCurrPos)
+            // gCurrPos = { lat: lat(), lng: lng() }
+            // _renderLocWeather(gCurrPos)
+            // _saveQueryStringParam(gCurrPos)
             gMap.addListener("click", (e) => {
+                const elTextInput = document.querySelector('.pick-location-modal input.loc-name')
+                elTextInput.value = ''
+                elTextInput.placeholder =  document.querySelector('.weather h2.loc-name').innerText
                 document.querySelector('.pick-location-modal').classList.remove('hide')
                 gCurrPos = e.latLng
             })
@@ -92,21 +96,21 @@ function onGetUserPos() {
 }
 
 
-function onPanTo({ lat, lng, ev }) {
-    if (ev) {
-        ev.preventDefault()
-        var str = ev.target.querySelector('input').value
-        mapService.getGeoLoc(str)
-            .then(pos => gCurrPos = pos)
-            .then(({ lat, lng }) => mapService.panTo(lat, lng))
-            .then(() => _saveQueryStringParam(gCurrPos))
-            .catch('adress not found')
-    } else {
-        gCurrPos = { lat, lng }
-        _saveQueryStringParam(gCurrPos)
-        mapService.panTo(lat, lng)
-    }
+function onPanTo({ lat, lng }) {
+    gCurrPos = { lat, lng }
+    _saveQueryStringParam(gCurrPos)
+    mapService.panTo(lat, lng)
     console.log('Panning the Map')
+}
+
+
+function onSearchLoc(ev) {
+    ev.preventDefault()
+    var str = ev.target.querySelector('input').value
+    mapService.getGeoLoc(str)
+        .then(pos => gCurrPos = pos)
+        .then(onPanTo)
+        .catch('adress not found')
 }
 
 function getUserInput(isAdding) {
@@ -116,7 +120,7 @@ function getUserInput(isAdding) {
     const name = document.querySelector('input.loc-name').value
     document.querySelector('.loc-name').value = ''
     onAddMarker(gCurrPos.lat(), gCurrPos.lng(), name, icon)
-    locService.add({ name, lat: gCurrPos.lat(), lng: gCurrPos.lng() , icon})
+    locService.add({ name, lat: gCurrPos.lat(), lng: gCurrPos.lng(), icon })
     onRenderLocs()
 }
 
@@ -125,9 +129,9 @@ function onRenderLocs() {
     locService.get()
         .then(locs => {
             elLoclIST.innerHTML = locs.map(loc => `<tr>
-        <td><button onclick="onDeleteLoc('${loc.locId}')">Delete</button></td>
+        <td><button onclick="onDeleteLoc('${loc.locId}')"><iconify-icon inline icon="fluent:delete-28-regular"></iconify-icon></button></td>
         <td>${loc.name}</td>
-       <td> <button onclick="onPanTo({lat:${loc.lat},lng:${loc.lng}})">Go</button></td>
+       <td> <button onclick="onPanTo({lat:${loc.lat},lng:${loc.lng}})"><iconify-icon inline icon="bx:map-pin"></iconify-icon></button></td>
         </tr>`).join('')
             return locs
         })
@@ -148,11 +152,11 @@ function onCopyLink() {
 
 function _onRenderMarks() {
     locService.get()
-        .then(locs => locs.forEach(loc => onAddMarker(loc.lat, loc.lng)))
+        .then(locs => locs.forEach(loc => onAddMarker(loc.lat, loc.lng, loc.name, loc.icon)))
 }
 
 function _saveQueryStringParam({ lat, lng }) {
-    const queryStrParam = `?lat=${lat ? lat : ''}&lng=${lng ? lng : ''}`
+    const queryStrParam = (lat && lng) ? `?lat=${lat}&lng=${lng}` : ''
     const newUrl = window.location.protocol + '//' + window.location.host + window.location.pathname + queryStrParam
     window.history.pushState({ path: newUrl }, '', newUrl)
     return newUrl
